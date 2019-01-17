@@ -1,10 +1,11 @@
 import React from 'react';
+//import { withRouter } from 'react-router-dom'; //hocที่ทำให้ดึงพวก match history (รวมถึงprops!!!) ของ router มาได้
 
 import classes from './Burger.module.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
 
 const burger = (props) => {
-    
+
     let transformedIngredients = Object.keys(props.ingredients)
         .map(igKey => {
             return [...Array(props.ingredients[igKey])].map((_, i) => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-    baseURL: 'POST URL'
+    baseURL: 'BASEURL'
 });
 
 export default instance;
