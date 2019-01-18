@@ -16,7 +16,7 @@ const burger = (props) => {
             return prevVal.concat(currVal);
         }, []); //Make array as empty when no obj
 
-    console.log(transformedIngredients);
+    //console.log(transformedIngredients);
     if (transformedIngredients.length === 0) {
         transformedIngredients = <p>Please start adding ingredients</p>
     }
