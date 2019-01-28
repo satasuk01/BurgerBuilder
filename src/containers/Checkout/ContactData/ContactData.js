@@ -84,9 +84,12 @@ class ContactData extends Component {
                         { value: 'cheapest', displayValue: 'Cheapest' }
                     ]
                 },
-                value: ''
+                value: 'fastest', //this will be fixed later
+                //validation: {},
+                valid: true
             }
         },
+        formIsValid: false,
         loading: false
     }
 
@@ -101,7 +104,7 @@ class ContactData extends Component {
         if (rules.maxLength) {
             isValid = value.length <= rules.minLength && isValid;
         }
-        console.log(isValid);
+        //console.log(isValid);
         return isValid;
     }
 
@@ -113,10 +116,16 @@ class ContactData extends Component {
             ...updatedOrderForm[inputIdentifier] //deep clone อีกทีเพราะโคลนจากข้างบนมันแค่โคลนตัวตื่นๆ
         };
         updatedFormElement.value = event.target.value;
-        if(updatedFormElement.validation) updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        if (updatedFormElement.validation) updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation); //ใส่if กรณีไม่มี validation
         updatedFormElement.touched = true;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
-        this.setState({ orderForm: updatedOrderForm });
+
+        let formIsValid = true;
+        for (let inputIdentifier in updatedOrderForm) {
+            formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+        }
+        //console.log(formIsValid);
+        this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
     }
 
     orderHandler = (event) => {
@@ -159,15 +168,15 @@ class ContactData extends Component {
                 {formElementsArray.map(formElement => (
                     <Input
                         key={formElement.id}
-                        invalid = {!formElement.config.valid}
-                        shouldValidate = {formElement.config.validation}
-                        touched = {formElement.config.touched}
+                        invalid={!formElement.config.valid}
+                        shouldValidate={formElement.config.validation}
+                        touched={formElement.config.touched}
                         elementType={formElement.config.elementType}
                         elementConfig={formElement.config.elementConfig}
                         value={formElement.config.value}
                         changed={(event) => this.inputChangedHandler(event, formElement.id)} />
                 ))}
-                <Button btnType="Success" clicked={this.orderHandler}>ORDER</Button>
+                <Button btnType="Success" disabled={!this.state.formIsValid} clicked={this.orderHandler}>ORDER</Button>
             </form>);
         if (this.state.loading) {
             form = <Spinner />;
