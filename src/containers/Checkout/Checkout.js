@@ -1,30 +1,27 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import ContactData from './ContactData/ContactData';
 
 class Checkout extends Component {
-    state = {
-        ingredients: null,
-        totalPrice: 0
-    }
 
-    componentWillMount() { //ถ้าใส่เป็น DidMount มันจะทำทีหลัง ทำให้มีบางส่วนเอา ingredients ที่เป็น null ไปใช้
-        const query = new URLSearchParams(this.props.location.search);
-        const ingredients = {};
-        let price = 0;
-        for (let param of query.entries()) {
-            // ['salad','1']
-            if (param[0] === 'price') {
-                price = param[1];
-            } else {
-                ingredients[param[0]] = +param[1]; //add + to convert to number
-            }
+    // componentWillMount() { //ถ้าใส่เป็น DidMount มันจะทำทีหลัง ทำให้มีบางส่วนเอา ingredients ที่เป็น null ไปใช้
+    //     const query = new URLSearchParams(this.props.location.search);
+    //     const ingredients = {};
+    //     let price = 0;
+    //     for (let param of query.entries()) {
+    //         // ['salad','1']
+    //         if (param[0] === 'price') {
+    //             price = param[1];
+    //         } else {
+    //             ingredients[param[0]] = +param[1]; //add + to convert to number
+    //         }
 
-        }
-        this.setState({ ingredients: ingredients, totalPrice: price });
-    }
+    //     }
+    //     this.setState({ ingredients: ingredients, totalPrice: price });
+    // }
 
     checkoutCancelledHandler = () => {
         this.props.history.goBack();//go back to last place
@@ -37,16 +34,24 @@ class Checkout extends Component {
         return (
             <div>
                 <CheckoutSummary
-                    ingredients={this.state.ingredients}
+                    ingredients={this.props.ings}
                     checkoutCancelled={this.checkoutCancelledHandler}
                     checkoutContinued={this.checkoutContinuedHandler}
                 />
                 <Route path={this.props.match.path + '/contact-data'}
-                    render={(props) => (<ContactData ingredients={this.state.ingredients} price={this.state.totalPrice} {...props} />)} /> 
-                    {/* props ที่ใส่ไปคือเพิ่อให้ ContactData ใช้พวก history ของ routerได้*/}
+                    component={ContactData}
+                // render={(props) => (<ContactData ingredients={this.props.ings} price={this.props.price} {...props} />)} 
+                />
+                {/* props ที่ใส่ไปคือเพิ่อให้ ContactData ใช้พวก history ของ routerได้*/}
             </div>
         );
     }
 }
 
-export default Checkout;
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients
+    }
+};
+
+export default connect(mapStateToProps)(Checkout);
